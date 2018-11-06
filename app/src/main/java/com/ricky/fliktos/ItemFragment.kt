@@ -13,11 +13,9 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
-import android.widget.TextView
 import android.widget.Toast
-import com.ricky.fliktos.controller.PhotoListViewModel
+import com.ricky.fliktos.controller.PhotoListPresenter
 import com.ricky.fliktos.model.Item
-import org.w3c.dom.Text
 
 
 /**
@@ -38,7 +36,7 @@ class ItemFragment : Fragment() {
     private lateinit var textEditView: TextInputEditText
     private lateinit var searchGoButton: Button
 
-    private val photoListListener: PhotoListViewModel.Listener = object : PhotoListViewModel.Listener {
+    private val photoListListener: PhotoListPresenter.Listener = object : PhotoListPresenter.Listener {
         override fun isLoading(): Boolean {
             TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
         }
@@ -53,7 +51,7 @@ class ItemFragment : Fragment() {
 
     }
 
-    private val photoListViewModel: PhotoListViewModel = PhotoListViewModel(photoListListener)
+    private val photoListPresenter: PhotoListPresenter = PhotoListPresenter(photoListListener)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,7 +74,7 @@ class ItemFragment : Fragment() {
                 columnCount <= 1 -> LinearLayoutManager(context)
                 else -> GridLayoutManager(context, columnCount)
             }
-            adapter = ItemRecyclerViewAdapter(photoListViewModel.list, listener)
+            adapter = ItemRecyclerViewAdapter(photoListPresenter.list, listener)
             this@ItemFragment.adapter = adapter as ItemRecyclerViewAdapter
 
             setHasFixedSize(true)
@@ -86,7 +84,7 @@ class ItemFragment : Fragment() {
         // EditText
         textEditView = view.findViewById(R.id.text_input)
         textEditView.setOnEditorActionListener { _, actionId, _ ->
-            if(actionId == EditorInfo.IME_ACTION_GO) {
+            if (actionId == EditorInfo.IME_ACTION_GO) {
                 handleTagInput()
                 true
             } else
@@ -104,29 +102,10 @@ class ItemFragment : Fragment() {
         return view
     }
 
-    private fun handleTagInput() {
-        val tagList = textEditView.text
-            .split(" ,".toRegex())
-        photoListViewModel.fetch(tagList)
-
-        recyclerView.scrollToPosition(0)
-        textEditView.clearFocus()
-        hideKeyboard()
-    }
-
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        photoListViewModel.fetch(emptyList())
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        if (context is OnListFragmentInteractionListener) {
-            listener = context
-        } else {
-            throw RuntimeException(context.toString() + " must implement OnListFragmentInteractionListener")
-        }
+        photoListPresenter.fetch(emptyList())
     }
 
     override fun onDetach() {
@@ -137,7 +116,19 @@ class ItemFragment : Fragment() {
     private fun hideKeyboard() {
         (context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager).hideSoftInputFromWindow(
             view!!.windowToken,
-            InputMethodManager.HIDE_NOT_ALWAYS)
+            InputMethodManager.HIDE_NOT_ALWAYS
+        )
+    }
+
+    private fun handleTagInput() {
+        val tagList = textEditView.text
+            .trim()
+            .split(" ,".toRegex())
+        photoListPresenter.fetch(tagList)
+
+        recyclerView.scrollToPosition(0)
+        textEditView.clearFocus()
+        hideKeyboard()
     }
 
     interface OnListFragmentInteractionListener {
