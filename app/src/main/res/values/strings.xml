@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">KotlinFliktos</string>
+    <string name="author_formatted">Author: %1$s</string>
+    <string name="tags_formatted">Tags: %1$s</string>
+</resources>
