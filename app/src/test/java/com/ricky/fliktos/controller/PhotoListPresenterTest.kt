@@ -7,10 +7,8 @@ import org.junit.Before
 import org.junit.Test
 import org.mockito.MockitoAnnotations
 
-
 class PhotoListPresenterTest {
     private val testSchduler = TestScheduler()
-
     private var loaded_invoke = false
 
     @Before
@@ -27,7 +25,7 @@ class PhotoListPresenterTest {
      */
     @Test
     fun fetch() {
-        lateinit var photoListPresenter : PhotoListPresenter
+        lateinit var photoListPresenter: PhotoListPresenter
 
         val listener: PhotoListPresenter.Listener = object : PhotoListPresenter.Listener {
             override fun isLoading(): Boolean {

@@ -7,14 +7,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import com.ricky.fliktos.ItemFragment.OnListFragmentInteractionListener
 import com.ricky.fliktos.model.Item
-import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_item.view.*
 
 class ItemRecyclerViewAdapter(
     private val mValues: List<Item>,
-    private val mListener: OnListFragmentInteractionListener?
+    private val mImageLoader: ImageLoader
 ) : RecyclerView.Adapter<ItemRecyclerViewAdapter.ViewHolder>() {
 
     private val mOnClickListener: View.OnClickListener
@@ -22,9 +20,6 @@ class ItemRecyclerViewAdapter(
     init {
         mOnClickListener = View.OnClickListener { v ->
             val item = v.tag as Item
-            // Notify the active callbacks interface (the activity, if the fragment is attached to
-            // one) that an item has been selected.
-            mListener?.onListFragmentInteraction(item)
         }
     }
 
@@ -38,23 +33,25 @@ class ItemRecyclerViewAdapter(
         val item = mValues[position]
 
         // title
-        item.title?.let { holder.mTitle.text = item.title }
+        item.title?.let {
+            holder.mTitle.text = it
+        }
 
         // author
         item.author?.let {
             holder.mAuthor.text =
-                    holder.itemView.context.resources.getString(R.string.author_formatted, parseAuthor(item.author!!))
+                    holder.itemView.context.resources.getString(R.string.author_formatted, parseAuthor(it))
         }
 
         // tags
         item.tags?.let {
-            holder.mTags.text = holder.itemView.context.resources.getString(R.string.tags_formatted, item.tags)
+            holder.mTags.text = holder.itemView.context.resources.getString(R.string.tags_formatted, it)
         }
 
         // photo
-        Picasso.get()
-            .load(item.media?.m)
-            .into(holder.mPhoto)
+        item.media?.m?.let {
+            mImageLoader.loadImage(holder.mPhoto, it)
+        }
 
         with(holder.mView) {
             tag = item
@@ -72,16 +69,14 @@ class ItemRecyclerViewAdapter(
         return input.substring(start + 2, end)
     }
 
-    inner class ViewHolder(val mView: View) : RecyclerView.ViewHolder(mView) {
+    class ViewHolder(val mView: View) : RecyclerView.ViewHolder(mView) {
         val mTitle: TextView = mView.title
         val mPhoto: ImageView = mView.photo
         val mAuthor: TextView = mView.author
         val mTags: TextView = mView.tags
+    }
 
-        override fun toString(): String {
-            return "ViewHolder(mView=$mView, mTitle=$mTitle)"
-        }
-
-
+    interface ImageLoader {
+        fun loadImage(imageView: ImageView, url: String)
     }
 }

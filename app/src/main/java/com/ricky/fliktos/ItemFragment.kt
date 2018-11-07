@@ -4,7 +4,6 @@ import android.content.Context
 import android.os.Bundle
 import android.support.design.widget.TextInputEditText
 import android.support.v4.app.Fragment
-import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -13,22 +12,21 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.Toast
 import com.ricky.fliktos.controller.PhotoListPresenter
-import com.ricky.fliktos.model.Item
+import com.squareup.picasso.Picasso
 
 
 /**
  * A fragment representing a list of Items.
- * Activities containing this fragment MUST implement the
- * [ItemFragment.OnListFragmentInteractionListener] interface.
  */
-class ItemFragment : Fragment() {
-
-    // TODO: Customize parameters
-    private var columnCount = 1
-
-    private var listener: OnListFragmentInteractionListener? = null
+class ItemFragment : Fragment(), ItemRecyclerViewAdapter.ImageLoader {
+    override fun loadImage(imageView: ImageView, url: String) {
+        Picasso.get()
+            .load(url)
+            .into(imageView)
+    }
 
     private lateinit var adapter: ItemRecyclerViewAdapter
     private lateinit var recyclerView: RecyclerView
@@ -55,10 +53,6 @@ class ItemFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        arguments?.let {
-            columnCount = it.getInt(ARG_COLUMN_COUNT)
-        }
     }
 
     override fun onCreateView(
@@ -70,11 +64,9 @@ class ItemFragment : Fragment() {
         // List
         recyclerView = view.findViewById(R.id.list)
         with(recyclerView) {
-            layoutManager = when {
-                columnCount <= 1 -> LinearLayoutManager(context)
-                else -> GridLayoutManager(context, columnCount)
-            }
-            adapter = ItemRecyclerViewAdapter(photoListPresenter.list, listener)
+            layoutManager = LinearLayoutManager(context)
+
+            adapter = ItemRecyclerViewAdapter(photoListPresenter.list, this@ItemFragment)
             this@ItemFragment.adapter = adapter as ItemRecyclerViewAdapter
 
             setHasFixedSize(true)
@@ -110,7 +102,6 @@ class ItemFragment : Fragment() {
 
     override fun onDetach() {
         super.onDetach()
-        listener = null
     }
 
     private fun hideKeyboard() {
@@ -131,23 +122,10 @@ class ItemFragment : Fragment() {
         hideKeyboard()
     }
 
-    interface OnListFragmentInteractionListener {
-        // TODO: Update argument type and name
-        fun onListFragmentInteraction(item: Item?)
-    }
-
     companion object {
 
-        // TODO: Customize parameter argument names
-        const val ARG_COLUMN_COUNT = "column-count"
-
-        // TODO: Customize parameter initialization
         @JvmStatic
         fun newInstance(columnCount: Int) =
-            ItemFragment().apply {
-                arguments = Bundle().apply {
-                    putInt(ARG_COLUMN_COUNT, columnCount)
-                }
-            }
+            ItemFragment()
     }
 }
