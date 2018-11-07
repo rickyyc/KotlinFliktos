@@ -7,6 +7,7 @@ MPV architecture is used, but with no direct references to the view objects. The
 Picasso is used to load images with caching.
 Retrofit is used to build the network layer.
 For unit testing, Robolectric is used to provide mocked Android context (ie. Activity, Resources, Context).
+Models are generated through http://www.jsonschema2pojo.org/ and the resulting POJO converted to Kotlin.
 
 ## Test
 Basic unit tests are written for the RecyclerView adapter and presenter where most logics are in this project.
