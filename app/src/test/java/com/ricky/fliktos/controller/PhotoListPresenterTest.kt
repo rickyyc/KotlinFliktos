@@ -9,7 +9,7 @@ import org.mockito.MockitoAnnotations
 
 class PhotoListPresenterTest {
     private val testSchduler = TestScheduler()
-    private var loaded_invoke = false
+    private var loadedInvoked = false
 
     @Before
     fun setUp() {
@@ -33,7 +33,7 @@ class PhotoListPresenterTest {
             }
 
             override fun loaded() {
-                loaded_invoke = photoListPresenter.list.isNotEmpty()
+                loadedInvoked = photoListPresenter.list.isNotEmpty()
             }
 
             override fun failed() {
@@ -47,6 +47,6 @@ class PhotoListPresenterTest {
 
         testSchduler.triggerActions()
 
-        Assert.assertTrue(loaded_invoke)
+        Assert.assertTrue(loadedInvoked)
     }
 }

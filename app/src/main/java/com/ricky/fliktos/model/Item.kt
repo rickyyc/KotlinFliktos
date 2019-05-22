@@ -54,7 +54,7 @@ class Item : Parcelable {
      * No args constructor for use in serialization
      *
      */
-    constructor() {}
+    constructor()
 
     /**
      *

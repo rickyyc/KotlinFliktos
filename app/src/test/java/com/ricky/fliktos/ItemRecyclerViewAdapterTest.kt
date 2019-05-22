@@ -38,9 +38,9 @@ class ItemRecyclerViewAdapterTest {
     @Test
     fun onBindViewHolder() {
 
-        var viewHolder = ItemRecyclerViewAdapter.ViewHolder(itemView)
+        val viewHolder = ItemRecyclerViewAdapter.ViewHolder(itemView)
 
-        var adapter = ItemRecyclerViewAdapter(items, object : ItemRecyclerViewAdapter.ImageLoader {
+        val adapter = ItemRecyclerViewAdapter(items, object : ItemRecyclerViewAdapter.ImageLoader {
             override fun loadImage(imageView: ImageView, url: String) {
                 Assert.assertThat(url, `is`(TEST_URL))
             }
@@ -56,8 +56,8 @@ class ItemRecyclerViewAdapterTest {
     }
 
     companion object {
-        val TEST_TITLE = "title"
-        val TEST_TAG = "tag tag"
+        const val TEST_TITLE = "title"
+        const val TEST_TAG = "tag tag"
         val TEST_AUTHOR = "author"
         val TEST_URL = "url"
     }

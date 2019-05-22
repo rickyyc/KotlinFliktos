@@ -40,7 +40,7 @@ class ItemFragment : Fragment(), ItemRecyclerViewAdapter.ImageLoader {
         }
 
         override fun loaded() {
-            adapter!!.notifyDataSetChanged()
+            adapter.notifyDataSetChanged()
         }
 
         override fun failed() {
@@ -50,10 +50,6 @@ class ItemFragment : Fragment(), ItemRecyclerViewAdapter.ImageLoader {
     }
 
     private val photoListPresenter: PhotoListPresenter = PhotoListPresenter(photoListListener)
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -85,7 +81,7 @@ class ItemFragment : Fragment(), ItemRecyclerViewAdapter.ImageLoader {
 
         // Search Button
         searchGoButton = view.findViewById(R.id.search_go_btn)
-        searchGoButton.let { _ ->
+        searchGoButton.let {
             searchGoButton.setOnClickListener {
                 handleTagInput()
             }
@@ -100,26 +96,24 @@ class ItemFragment : Fragment(), ItemRecyclerViewAdapter.ImageLoader {
         photoListPresenter.fetch(emptyList())
     }
 
-    override fun onDetach() {
-        super.onDetach()
-    }
-
     private fun hideKeyboard() {
-        (context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager).hideSoftInputFromWindow(
-            view!!.windowToken,
-            InputMethodManager.HIDE_NOT_ALWAYS
-        )
+        this.view?.let {
+            (context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager).hideSoftInputFromWindow(
+                it.windowToken,
+                InputMethodManager.HIDE_NOT_ALWAYS
+            )
+        }
     }
 
     private fun handleTagInput() {
-        val tagList = textEditView.text
-            .trim()
-            .split(" ,".toRegex())
-        photoListPresenter.fetch(tagList)
+        val tagList = textEditView.text?.trim()?.split(" ,".toRegex())
+        if (tagList != null) {
+            photoListPresenter.fetch(tagList)
 
-        recyclerView.scrollToPosition(0)
-        textEditView.clearFocus()
-        hideKeyboard()
+            recyclerView.scrollToPosition(0)
+            textEditView.clearFocus()
+            hideKeyboard()
+        }
     }
 
     companion object {

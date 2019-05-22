@@ -21,14 +21,7 @@ class Media : Parcelable {
     /**
      * No args constructor for use in serialization
      */
-    constructor() {}
-
-    /**
-     * @param m
-     */
-    constructor(m: String) : super() {
-        this.m = m
-    }
+    constructor()
 
     fun withM(m: String): Media {
         this.m = m

@@ -8,7 +8,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        var fragment = ItemFragment.newInstance(1)
+        val fragment = ItemFragment.newInstance(1)
 
         supportFragmentManager.beginTransaction()
             .replace(R.id.container, fragment)
